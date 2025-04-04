@@ -7,8 +7,17 @@ def extract_filename(url: str) -> str:
 
     return path_parts[-1] if path_parts else ''
 
+def is_get_from_internet(url):
+    network_protocol = ["http", "https", "ftp"]
+    startwith = url.split("://")[0]
+    if startwith in network_protocol:
+        return True
+    return False
+
 def download_from_sources(sources, cache_dir):
     for source in sources:
+        if not is_get_from_internet(source[1]):
+            continue
         print("Downloading from", source[1], "...")
         save_as = str(cache_dir)
         if source[0] == '':

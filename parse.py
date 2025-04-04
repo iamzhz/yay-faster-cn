@@ -15,6 +15,9 @@ def get_arch():
     return alias_map.get(arch, arch)
 
 def get_sources(pkgbuild_dir):
+    if not pkgbuild_dir.exists():
+        print(f"Something went wrong. {pkgbuild_dir} doesn't exist.")
+        return []
     arch_name = get_arch()
     result = subprocess.run(
         ['makepkg', '--printsrcinfo'],

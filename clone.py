@@ -1,14 +1,8 @@
 import subprocess
+import utils
 
-
-def clone_repo(package: str, cache_dir: str):
+def clone_repo(url: str, cache_dir):
     try:
-        # generate url
-        url = f'https://aur.archlinux.org/{package}.git'
-
-        # generate target dir
-
-
         # run - git clone
         result = subprocess.run(
             ['git', 'clone', url, str(cache_dir)],
@@ -22,10 +16,8 @@ def clone_repo(package: str, cache_dir: str):
             and (cache_dir / '.git').exists()
         )
         
-        if not is_success and cache_dir.exists():
-            if str(cache_dir) == '/':
-                return   # Just in case
-            subprocess.run(['rm', '-rf', str(cache_dir)], check=False)
+        if not is_success:
+            utils.delete_the_whole_directory(cache_dir)
     
         return is_success
     except Exception:
