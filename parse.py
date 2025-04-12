@@ -1,6 +1,12 @@
 import subprocess
 import os
+import re
 
+mirrors_table = {
+    r"(https://github.com/.+)": "https://ghfast.top/{}",
+    r"(https://raw.githubusercontent.com/.+)": "https://ghfast.top/{}",
+    r"https://cdn.kernel.org/pub/linux/kernel/(.+)": "https://mirrors.tuna.tsinghua.edu.cn/kernel/{}"
+}
 def get_arch():
     arch = subprocess.getoutput("uname -m").lower()
     alias_map = {
@@ -36,8 +42,11 @@ def get_sources(pkgbuild_dir):
                 source = []
                 source.append('')
                 source.append(source_str)
-            if source[1].startswith('https://github.com/'):
-                source[1] = 'https://ghfast.top/' + source[1]
+            for mirrorable in mirrors_table:
+                matchObj = re.match(mirrorable, source[1])
+                if matchObj:
+                    source[1] = mirrors_table[mirrorable].format(matchObj.group(1))
+                    break
             sources.append(source)
 
     return sources
